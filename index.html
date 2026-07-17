@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hermano — Spanish Practice</title>
+<style>
+  :root {
+    --bg1:#1a0a2e; --bg2:#16213e; --bg3:#0f3460;
+    --daily:#E07B3F; --ministry:#6B4FA0; --pron:#2E8B7A; --free:#C0782A;
+    --cream:#f5e6c8; --muted:#a89bc2; --dim:#7a6e8a;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+    color: var(--cream);
+    min-height: 100dvh;
+  }
+  .hidden { display:none !important; }
+
+  /* ── Welcome ── */
+  #welcome { max-width:440px; margin:0 auto; padding:28px 18px 40px; text-align:center; }
+  .dove { font-size:52px; filter: drop-shadow(0 0 22px rgba(224,123,63,.55)); }
+  h1 { font-size:32px; letter-spacing:1px; margin:6px 0 2px; text-shadow:0 2px 22px rgba(224,123,63,.4); }
+  .tagline { color:var(--muted); font-style:italic; font-size:13px; }
+  .divider { width:64px; height:2px; margin:14px auto; background:linear-gradient(90deg,transparent,var(--daily),transparent); }
+  .badges { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px; }
+  .badge { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:20px; padding:4px 11px; color:var(--muted); font-size:11px; }
+  .sect { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:2px; margin:18px 0 10px; }
+  .levels { display:flex; gap:8px; }
+  .levels button {
+    flex:1; padding:11px 4px; border-radius:12px; font-size:13px; font-family:inherit; cursor:pointer;
+    border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.03); color:var(--dim); transition:.2s;
+  }
+  .levels button.active { border-color:var(--daily); background:rgba(224,123,63,.15); color:var(--cream); }
+  .modes { display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+  .mode-card {
+    display:flex; align-items:center; gap:13px; text-align:left; padding:14px 16px; cursor:pointer;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.09); border-radius:14px; transition:.2s;
+    font-family:inherit; color:var(--cream); width:100%;
+  }
+  .mode-card:active { transform:scale(.985); }
+  .mode-icon { font-size:25px; }
+  .mode-name { font-size:15px; font-weight:600; }
+  .mode-desc { font-size:11px; color:var(--dim); margin-top:2px; }
+  .mode-arrow { margin-left:auto; font-size:16px; }
+  .lesson-dots { display:flex; gap:6px; margin-top:8px; }
+  .lesson-dot {
+    width:26px; height:26px; border-radius:50%; font-size:10px; font-weight:bold; font-family:inherit;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    border:1px solid rgba(255,255,255,.18); background:transparent; color:rgba(255,255,255,.35); transition:.2s;
+  }
+  .verse { color:#4a4060; font-size:11px; font-style:italic; margin-top:26px; }
+
+  /* ── Chat ── */
+  #chat { display:flex; flex-direction:column; height:100dvh; max-width:640px; margin:0 auto; }
+  #chat-header {
+    display:flex; align-items:center; gap:10px; padding:10px 14px; flex-shrink:0;
+    border-bottom:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.32); backdrop-filter:blur(10px);
+  }
+  #back-btn { background:none; border:none; color:var(--dim); font-size:22px; cursor:pointer; padding:4px 8px; }
+  #chat-title { font-size:14px; font-weight:600; }
+  #chat-sub { font-size:11px; color:var(--dim); }
+  #level-select {
+    margin-left:auto; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+    border-radius:9px; color:var(--muted); font-size:11px; padding:5px 8px; font-family:inherit;
+  }
+  #lesson-band { padding:8px 16px 10px; border-bottom:1px solid rgba(255,255,255,.07); flex-shrink:0; background:rgba(255,255,255,.03); }
+  #lesson-label { font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; }
+  #lesson-bar { display:flex; gap:4px; }
+  #lesson-bar div { height:4px; flex:1; border-radius:4px; background:rgba(255,255,255,.08); transition:.4s; }
+
+  #messages { flex:1; overflow-y:auto; padding:16px 12px; display:flex; flex-direction:column; gap:12px; }
+  .msg-row { display:flex; align-items:flex-end; gap:8px; }
+  .msg-row.user { justify-content:flex-end; }
+  .avatar {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0; font-size:13px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--accent,#E07B3F), #6B4FA0);
+  }
+  .bubble {
+    max-width:80%; padding:11px 14px; font-size:14px; line-height:1.65; white-space:pre-wrap;
+    border-radius:18px 18px 18px 5px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
+  }
+  .user .bubble { border-radius:18px 18px 5px 18px; border:none; color:#fff; background:var(--accent,#E07B3F); }
+  .replay-btn {
+    background:none; border:none; color:#5a5080; font-size:11px; cursor:pointer; font-family:inherit;
+    padding:3px 4px; margin-top:3px; display:flex; gap:5px; align-items:center;
+  }
+  .typing { display:flex; gap:5px; padding:13px 16px; }
+  .typing span { width:6px; height:6px; border-radius:50%; background:var(--accent,#E07B3F); opacity:.7; animation:bounce 1.2s infinite; }
+  .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes bounce { 0%,100%{transform:scale(1);opacity:.45} 50%{transform:scale(1.35);opacity:1} }
+
+  #listening-line { text-align:center; color:var(--muted); font-size:13px; font-style:italic; padding:4px; }
+
+  #input-area { padding:10px 12px 14px; border-top:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.32); backdrop-filter:blur(10px); flex-shrink:0; }
+  #speed-row { display:flex; gap:7px; align-items:center; margin-bottom:9px; padding-left:2px; }
+  #speed-row .lbl { font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; }
+  .speed-btn {
+    border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:var(--dim);
+    border-radius:14px; font-size:11px; font-weight:600; padding:4px 11px; cursor:pointer; font-family:inherit; transition:.2s;
+  }
+  .speed-btn.active { background:var(--accent,#E07B3F); border-color:transparent; color:#fff; }
+  #input-row { display:flex; gap:8px; align-items:flex-end; }
+  #mic-btn, #send-btn {
+    width:46px; height:46px; border-radius:13px; border:none; font-size:19px; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; transition:.2s;
+    background:rgba(255,255,255,.08); color:var(--dim);
+  }
+  #mic-btn.listening { background:linear-gradient(135deg,var(--accent,#E07B3F),#c0392b); color:#fff; animation:micpulse 1s infinite; }
+  #send-btn.ready { background:linear-gradient(135deg,var(--accent,#E07B3F),#6B4FA0); color:#fff; }
+  @keyframes micpulse { 0%,100%{box-shadow:0 0 0 0 rgba(224,123,63,.4)} 50%{box-shadow:0 0 0 10px rgba(224,123,63,0)} }
+  #text-input {
+    flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:15px;
+    padding:12px 14px; color:var(--cream); font-size:14px; font-family:inherit; outline:none; min-width:0;
+  }
+  #text-input:focus { border-color:rgba(224,123,63,.45); }
+  #hint { text-align:center; color:#3a3050; font-size:10px; font-style:italic; margin-top:7px; }
+
+  /* ── Celebration ── */
+  #celebration {
+    position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:rgba(10,5,25,.85); backdrop-filter:blur(8px);
+  }
+  #celebration .card {
+    background:#241540; border:1px solid rgba(255,255,255,.15); border-radius:24px;
+    padding:34px 28px; margin:0 22px; text-align:center; max-width:320px; width:100%;
+  }
+  #celebration .big { font-size:56px; margin-bottom:10px; }
+  #celebration h2 { font-size:22px; margin-bottom:6px; }
+  #celebration p { color:var(--muted); font-size:13px; line-height:1.5; margin-bottom:22px; }
+  #next-lesson-btn {
+    width:100%; padding:13px; border:none; border-radius:15px; cursor:pointer; font-family:inherit;
+    font-size:15px; font-weight:600; color:#fff; background:linear-gradient(135deg,#E07B3F,#6B4FA0); margin-bottom:10px;
+  }
+  #stay-btn { background:none; border:none; color:var(--dim); font-size:13px; cursor:pointer; font-family:inherit; padding:6px; }
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME SCREEN ══ -->
+<div id="welcome">
+  <div class="dove">🕊️</div>
+  <h1>Hermano</h1>
+  <div class="tagline">Your Spanish Practice Partner</div>
+  <div class="divider"></div>
+  <div class="badges">
+    <span class="badge">🎙️ Voice Input</span>
+    <span class="badge">🔊 Native Audio</span>
+    <span class="badge">📚 5-Lesson Paths</span>
+  </div>
+
+  <div class="sect">Your Level</div>
+  <div class="levels" id="level-buttons">
+    <button data-level="beginner" class="active">Beginner</button>
+    <button data-level="intermediate">Intermediate</button>
+    <button data-level="advanced">Advanced</button>
+  </div>
+
+  <div class="sect">Choose Your Focus</div>
+  <div class="modes" id="mode-cards"></div>
+
+  <div class="verse">"For God has not given us a spirit of fear..." — 2 Tim 1:7</div>
+</div>
+
+<!-- ══ CHAT SCREEN ══ -->
+<div id="chat" class="hidden">
+  <div id="chat-header">
+    <button id="back-btn">←</button>
+    <span id="chat-icon" style="font-size:19px">🌅</span>
+    <div>
+      <div id="chat-title">Daily Life</div>
+      <div id="chat-sub">Beginner</div>
+    </div>
+    <select id="level-select">
+      <option value="beginner">Beginner</option>
+      <option value="intermediate">Intermediate</option>
+      <option value="advanced">Advanced</option>
+    </select>
+  </div>
+
+  <div id="lesson-band" class="hidden">
+    <div id="lesson-label">Lesson 1 of 5</div>
+    <div id="lesson-bar"><div></div><div></div><div></div><div></div><div></div></div>
+  </div>
+
+  <div id="messages"></div>
+
+  <div id="input-area">
+    <div id="speed-row">
+      <span class="lbl">🔊 Speed</span>
+      <button class="speed-btn" data-speed="0.5">0.5×</button>
+      <button class="speed-btn" data-speed="0.75">0.75×</button>
+      <button class="speed-btn active" data-speed="1">1×</button>
+      <button class="speed-btn" data-speed="1.25">1.25×</button>
+    </div>
+    <div id="input-row">
+      <button id="mic-btn" title="Tap to speak">🎙️</button>
+      <input id="text-input" type="text" placeholder="Escribe un mensaje..." autocomplete="off">
+      <button id="send-btn">↑</button>
+    </div>
+    <div id="hint">🎙️ tap to speak — sends automatically when you pause</div>
+  </div>
+</div>
+
+<!-- ══ CELEBRATION ══ -->
+<div id="celebration" class="hidden">
+  <div class="card">
+    <div class="big">🎉</div>
+    <h2 id="cel-title">Lesson 1 Complete!</h2>
+    <p id="cel-text">Excellent work! Ready for the next lesson?</p>
+    <button id="next-lesson-btn">Start Next Lesson →</button>
+    <button id="stay-btn">Keep practicing this lesson</button>
+  </div>
+</div>
+
+<script>
+// ═════════ STATE ═════════
+const MODES = {
+  daily:        { name:"Daily Life",      icon:"🌅", color:"#E07B3F", desc:"Greetings, shopping, directions & more", curriculum:true },
+  ministry:     { name:"Church Ministry", icon:"✝️", color:"#6B4FA0", desc:"Worship, prayer & scripture", curriculum:true },
+  pronunciation:{ name:"Pronunciation",   icon:"🗣️", color:"#2E8B7A", desc:"Perfect your accent phrase by phrase", curriculum:true },
+  free:         { name:"Free Practice",   icon:"💬", color:"#C0782A", desc:"Open conversation, your way", curriculum:false },
+};
+const LESSON_TITLES = {
+  daily: ["Greetings","Numbers & Shopping","Directions","Neighbors & Community","Medical & Emergency"],
+  ministry: ["Sunday Greetings","Worship & Prayer","Scripture & Word","Evangelism & Outreach","Altar & Ministry"],
+  pronunciation: ["Vowels","Key Consonants","Greeting Phrases","Church Words","Full Sentences"],
+};
+
+let state = {
+  level: "beginner",
+  mode: null,
+  lesson: 1,
+  messages: [],
+  speed: 1.0,
+  busy: false,
+};
+
+// progress persisted per mode
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem("hermano-progress") || "{}"); }
+  catch { return {}; }
+}
+function saveProgress(p) { localStorage.setItem("hermano-progress", JSON.stringify(p)); }
+
+// ═════════ AUDIO ═════════
+let currentAudio = null;
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  // Play a silent buffer inside a user gesture to unlock autoplay
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.connect(ctx.destination); src.start(0);
+    audioUnlocked = true;
+  } catch {}
+}
+
+function extractSpanish(text) {
+  return text.split("\n")
+    .filter(l => { const t=l.trim();
+      return t && !t.startsWith("🇺🇸") && !t.startsWith("💡") && !t.startsWith("🎙️") && !t.startsWith("⚠️"); })
+    .join(" ")
+    .replace(/\[.*?\]/g, "")
+    .trim().slice(0, 1200);
+}
+
+async function speak(text) {
+  const spanish = extractSpanish(text);
+  if (!spanish) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  try {
+    const r = await fetch("/api/tts", {
+      method:"POST", headers:{ "content-type":"application/json" },
+      body: JSON.stringify({ text: spanish, speed: state.speed }),
+    });
+    if (r.status === 204 || !r.ok) return;
+    const blob = await r.blob();
+    if (!blob.size) return;
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => { URL.revokeObjectURL(url); if (currentAudio===audio) currentAudio=null; };
+    audio.onerror = () => { URL.revokeObjectURL(url); if (currentAudio===audio) currentAudio=null; };
+    await audio.play().catch(e => console.warn("autoplay blocked:", e.message));
+  } catch (e) { console.warn("tts:", e); }
+}
+
+// ═════════ WELCOME UI ═════════
+const welcomeEl = document.getElementById("welcome");
+const chatEl = document.getElementById("chat");
+
+function renderModeCards() {
+  const progress = getProgress();
+  const wrap = document.getElementById("mode-cards");
+  wrap.innerHTML = "";
+  Object.entries(MODES).forEach(([id, m]) => {
+    const p = progress[id] || { current:1, done:[] };
+    const card = document.createElement("button");
+    card.className = "mode-card";
+    card.style.borderLeft = "3px solid " + m.color;
+    let dotsHtml = "";
+    if (m.curriculum) {
+      dotsHtml = '<div class="lesson-dots">' + [1,2,3,4,5].map(n => {
+        const done = p.done.includes(n);
+        const cur = n === p.current;
+        const style = done ? `background:${m.color};border-color:${m.color};color:#fff`
+                    : cur ? `border-color:${m.color};border-width:2px;color:#fff;background:rgba(255,255,255,.08)` : "";
+        return `<span class="lesson-dot" data-mode="${id}" data-lesson="${n}" style="${style}">${done ? "✓" : n}</span>`;
+      }).join("") + "</div>";
+    }
+    card.innerHTML = `
+      <span class="mode-icon">${m.icon}</span>
+      <div style="flex:1">
+        <div class="mode-name">${m.name}</div>
+        <div class="mode-desc">${m.desc}</div>
+        ${dotsHtml}
+      </div>
+      <span class="mode-arrow" style="color:${m.color}">→</span>`;
+    card.addEventListener("click", (e) => {
+      unlockAudio();
+      const dot = e.target.closest(".lesson-dot");
+      const lesson = dot ? Number(dot.dataset.lesson) : (p.current || 1);
+      startChat(id, lesson);
+    });
+    wrap.appendChild(card);
+  });
+}
+
+document.getElementById("level-buttons").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-level]");
+  if (!btn) return;
+  state.level = btn.dataset.level;
+  document.querySelectorAll("#level-buttons button").forEach(b => b.classList.toggle("active", b === btn));
+});
+
+// ═════════ CHAT UI ═════════
+const messagesEl = document.getElementById("messages");
+const inputEl = document.getElementById("text-input");
+const micBtn = document.getElementById("mic-btn");
+const sendBtn = document.getElementById("send-btn");
+
+function setAccent(color) {
+  document.documentElement.style.setProperty("--accent", color);
+  chatEl.style.setProperty("--accent", color);
+}
+
+function startChat(modeId, lesson) {
+  state.mode = modeId;
+  state.lesson = lesson;
+  state.messages = [];
+  const m = MODES[modeId];
+  setAccent(m.color);
+  document.getElementById("chat-icon").textContent = m.icon;
+  document.getElementById("chat-title").textContent = m.name;
+  document.getElementById("chat-sub").textContent = cap(state.level);
+  document.getElementById("level-select").value = state.level;
+  messagesEl.innerHTML = "";
+  updateLessonBand();
+  welcomeEl.classList.add("hidden");
+  chatEl.classList.remove("hidden");
+  // kick off conversation
+  sendToServer("Hello, I'm ready to start!", true);
+}
+
+function updateLessonBand() {
+  const band = document.getElementById("lesson-band");
+  const m = MODES[state.mode];
+  if (!m || !m.curriculum) { band.classList.add("hidden"); return; }
+  band.classList.remove("hidden");
+  const title = LESSON_TITLES[state.mode][state.lesson - 1] || "";
+  document.getElementById("lesson-label").textContent =
+    `Lesson ${state.lesson} of 5 — ${title}`;
+  const bars = document.querySelectorAll("#lesson-bar div");
+  bars.forEach((b, i) => {
+    const n = i + 1;
+    b.style.background = n < state.lesson ? m.color
+      : n === state.lesson ? m.color + "80" : "rgba(255,255,255,.08)";
+  });
+}
+
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function addBubble(role, text) {
+  const row = document.createElement("div");
+  row.className = "msg-row " + role;
+  if (role === "assistant") {
+    row.innerHTML = `<div class="avatar">🕊️</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-start;max-width:80%">
+        <div class="bubble"></div>
+        <button class="replay-btn">🔊 replay Spanish</button>
+      </div>`;
+    row.querySelector(".bubble").textContent = text;
+    row.querySelector(".replay-btn").addEventListener("click", () => { unlockAudio(); speak(text); });
+  } else {
+    row.innerHTML = `<div class="bubble"></div>`;
+    row.querySelector(".bubble").textContent = text;
+  }
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function showTyping() {
+  const t = document.createElement("div");
+  t.className = "msg-row"; t.id = "typing-row";
+  t.innerHTML = `<div class="avatar">🕊️</div><div class="bubble typing"><span></span><span></span><span></span></div>`;
+  messagesEl.appendChild(t);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function hideTyping() { document.getElementById("typing-row")?.remove(); }
+
+async function sendToServer(text, hidden = false) {
+  if (state.busy) return;
+  state.busy = true;
+  cancelAutoSend();
+  if (!hidden) addBubble("user", text);
+  state.messages.push({ role:"user", content:text });
+  inputEl.value = "";
+  updateSendBtn();
+  showTyping();
+  try {
+    const r = await fetch("/api/chat", {
+      method:"POST", headers:{ "content-type":"application/json" },
+      body: JSON.stringify({
+        messages: state.messages, mode: state.mode,
+        level: state.level, lesson: state.lesson,
+      }),
+    });
+    hideTyping();
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      addBubble("assistant", "⚠️ " + (err.error || "Something went wrong. Please try again."));
+      state.busy = false;
+      return;
+    }
+    const data = await r.json();
+    state.messages.push({ role:"assistant", content:data.text });
+    addBubble("assistant", data.text);
+    speak(data.text);
+    if (data.lessonComplete && MODES[state.mode].curriculum) onLessonComplete();
+  } catch (e) {
+    hideTyping();
+    addBubble("assistant", "⚠️ Connection error. Please try again.");
+  }
+  state.busy = false;
+}
+
+// ═════════ LESSON COMPLETE ═════════
+function onLessonComplete() {
+  const progress = getProgress();
+  const p = progress[state.mode] || { current:1, done:[] };
+  if (!p.done.includes(state.lesson)) p.done.push(state.lesson);
+  p.current = Math.min(state.lesson + 1, 5);
+  progress[state.mode] = p;
+  saveProgress(progress);
+
+  const title = LESSON_TITLES[state.mode][state.lesson - 1] || "";
+  document.getElementById("cel-title").textContent = `Lesson ${state.lesson} Complete!`;
+  document.getElementById("cel-text").textContent =
+    state.lesson < 5
+      ? `"${title}" mastered! Ready for Lesson ${state.lesson + 1}?`
+      : `¡Felicidades! You've completed all 5 lessons of ${MODES[state.mode].name}!`;
+  document.getElementById("next-lesson-btn").style.display = state.lesson < 5 ? "block" : "none";
+  document.getElementById("celebration").classList.remove("hidden");
+}
+
+document.getElementById("next-lesson-btn").addEventListener("click", () => {
+  document.getElementById("celebration").classList.add("hidden");
+  startChat(state.mode, Math.min(state.lesson + 1, 5));
+});
+document.getElementById("stay-btn").addEventListener("click", () => {
+  document.getElementById("celebration").classList.add("hidden");
+});
+
+// ═════════ SPEECH RECOGNITION ═════════
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let listening = false;
+let autoSendTimer = null;
+const AUTO_SEND_MS = 1500;
+
+function cancelAutoSend() {
+  if (autoSendTimer) { clearTimeout(autoSendTimer); autoSendTimer = null; }
+}
+
+if (SR) {
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onresult = (e) => {
+    // ALWAYS use only the last result — prevents duplicate word bug
+    const result = e.results[e.results.length - 1];
+    const text = result[0].transcript.trim();
+    inputEl.value = text;      // replace, never append
+    updateSendBtn();
+    if (result.isFinal) {
+      try { recognition.stop(); } catch {}
+      cancelAutoSend();
+      autoSendTimer = setTimeout(() => {
+        const t = inputEl.value.trim();
+        if (t) sendToServer(t);
+      }, AUTO_SEND_MS);
+    }
+  };
+  recognition.onend = () => { listening = false; micBtn.classList.remove("listening"); micBtn.textContent = "🎙️"; };
+  recognition.onerror = (e) => {
+    listening = false; micBtn.classList.remove("listening"); micBtn.textContent = "🎙️";
+    if (e.error === "not-allowed") alert("Microphone blocked. Allow mic access in your browser settings.");
+  };
+} else {
+  micBtn.style.display = "none";
+  document.getElementById("hint").textContent = "Type a message and press Enter";
+}
+
+micBtn.addEventListener("click", () => {
+  unlockAudio();
+  if (!recognition) return;
+  if (listening) {
+    try { recognition.stop(); } catch {}
+    return;
+  }
+  cancelAutoSend();
+  recognition.lang = state.mode === "pronunciation" ? "es-ES" : "en-US";
+  try {
+    recognition.start();
+    listening = true;
+    micBtn.classList.add("listening");
+    micBtn.textContent = "⏹️";
+  } catch {}
+});
+
+// ═════════ INPUT ═════════
+function updateSendBtn() {
+  sendBtn.classList.toggle("ready", !!inputEl.value.trim());
+}
+inputEl.addEventListener("input", () => { cancelAutoSend(); updateSendBtn(); });
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { unlockAudio(); const t = inputEl.value.trim(); if (t) sendToServer(t); }
+});
+sendBtn.addEventListener("click", () => { unlockAudio(); const t = inputEl.value.trim(); if (t) sendToServer(t); });
+
+// speed buttons
+document.getElementById("speed-row").addEventListener("click", (e) => {
+  const btn = e.target.closest(".speed-btn");
+  if (!btn) return;
+  state.speed = Number(btn.dataset.speed);
+  document.querySelectorAll(".speed-btn").forEach(b => b.classList.toggle("active", b === btn));
+});
+
+// level change mid-chat
+document.getElementById("level-select").addEventListener("change", (e) => {
+  state.level = e.target.value;
+  document.getElementById("chat-sub").textContent = cap(state.level);
+});
+
+// back button
+document.getElementById("back-btn").addEventListener("click", () => {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (recognition && listening) { try { recognition.stop(); } catch {} }
+  cancelAutoSend();
+  chatEl.classList.add("hidden");
+  welcomeEl.classList.remove("hidden");
+  renderModeCards();
+});
+
+// init
+renderModeCards();
+</script>
+</body>
+</html>
