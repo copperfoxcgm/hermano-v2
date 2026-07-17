@@ -597,7 +597,7 @@ micBtn.addEventListener("click", () => {
   if (!recognition) return;
   if (listening) { try { recognition.stop(); } catch {} return; }
   cancelAutoSend();
-  recognition.lang = state.mode === "pronunciation" ? "es-ES" : "en-US";
+  recognition.lang = state.micLang || (state.mode === "pronunciation" ? "es-ES" : "en-US");
   try {
     recognition.start();
     listening = true;
@@ -652,9 +652,27 @@ document.getElementById("back-btn").addEventListener("click", () => {
   renderModeCards();
 });
 
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
+// Language toggle for mic
+state.micLang = "en-US";
+document.getElementById("lang-toggle")?.addEventListener("click", () => {
+  const btn = document.getElementById("lang-toggle");
+  if (state.micLang === "en-US") {
+    state.micLang = "es-ES";
+    btn.textContent = "🇪🇸 ES";
+    btn.style.borderColor = "var(--accent)";
+    btn.style.color = "var(--cream)";
+  } else {
+    state.micLang = "en-US";
+    btn.textContent = "🇺🇸 EN";
+    btn.style.borderColor = "rgba(255,255,255,.12)";
+    btn.style.color = "var(--muted)";
+  }
+});
+
+renderModeCards();
+</script>
+</body>
+</html>
 renderModeCards();
 </script>
 </body>
