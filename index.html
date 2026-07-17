@@ -632,7 +632,7 @@ document.getElementById("speed-row").addEventListener("click", (e) => {
   document.querySelectorAll(".speed-btn").forEach(b => b.classList.toggle("active", b === btn));
   // If audio is playing, changing speed requires re-request (ElevenLabs controls speed server-side)
   // Just stop current audio so next replay uses new speed
-  if (currentAudio) stopAudio();
+  stopAudio();
 });
 
 document.getElementById("level-select").addEventListener("change", (e) => {
