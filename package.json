@@ -1,0 +1,12 @@
+{
+  "name": "hermano-v2",
+  "version": "2.0.0",
+  "description": "Hermano - Spanish practice partner for church community",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2"
+  }
+}
