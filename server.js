@@ -1,18 +1,17 @@
 // ─────────────────────────────────────────────
 // HERMANO v2 — Spanish Practice Server
-// One file. Express + Anthropic + ElevenLabs.
 // ─────────────────────────────────────────────
 const express = require("express");
 const path = require("path");
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
-app.use(express.static(__dirname)); // serves index.html
+app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const ELEVENLABS_KEY = process.env.ELEVENLABS_API_KEY;
-const VOICE_ID = "ErXwobaYiN019PkySvjV"; // Antoni
+const VOICE_ID = "d2Cxiyh5zS7CQNTlRrdT"; // Native Spanish voice
 
 // ── Curriculum ────────────────────────────────
 const LESSONS = {
@@ -31,11 +30,11 @@ const LESSONS = {
     { title: "Altar & Ministry", vocab: ["Pasa al altar", "Repite después de mí", "Acepta a Cristo", "Estás perdonado", "Nueva vida en Cristo"] },
   ],
   pronunciation: [
-    { title: "Vowels", vocab: ["a (ah)", "e (eh)", "i (ee)", "o (oh)", "u (oo)"] },
-    { title: "Key Consonants", vocab: ["r (soft trill)", "rr (strong trill)", "ll (like y)", "ñ (like ny)", "j (like h)"] },
-    { title: "Greeting Phrases", vocab: ["Buenos días [BWEH-nos DEE-as]", "¿Cómo estás? [KOH-moh ehs-TAHS]", "Mucho gusto [MOO-choh GOOS-toh]"] },
-    { title: "Church Words", vocab: ["Aleluya [ah-leh-LOO-yah]", "Bienvenidos [byehn-veh-NEE-dos]", "Misericordia [mee-seh-ree-KOR-dyah]", "Jesucristo [heh-soo-KREES-toh]"] },
-    { title: "Full Sentences", vocab: ["Complete phrase practice with natural rhythm and flow"] },
+    { title: "Vowels", vocab: ["a suena ah", "e suena eh", "i suena ee", "o suena oh", "u suena oo"] },
+    { title: "Key Consonants", vocab: ["r suave", "rr fuerte", "ll suena como y", "ñ suena como ny", "j suena como h"] },
+    { title: "Greeting Phrases", vocab: ["Buenos días", "¿Cómo estás?", "Mucho gusto"] },
+    { title: "Church Words", vocab: ["Aleluya", "Bienvenidos", "Misericordia", "Jesucristo"] },
+    { title: "Full Sentences", vocab: ["La práctica completa de frases con ritmo y fluidez natural"] },
   ],
 };
 
@@ -65,7 +64,14 @@ function buildPrompt(mode, level, lesson) {
   const modeRules = {
     daily: "Focus on everyday Spanish for Queens, NY — greetings, shopping, directions, neighbors, doctors, transportation.",
     ministry: "Focus on church Spanish — worship, prayer, altar calls, evangelism, scripture, greeting church members.",
-    pronunciation: "Teach ONE phrase at a time with phonetic spelling in brackets like [OH-lah]. Ask the student to repeat it. Give specific feedback on their attempt.",
+    pronunciation: `Pronunciation coaching mode. Teach ONE Spanish phrase at a time.
+- Say the phrase naturally in Spanish
+- Then write the phonetic pronunciation spelled out in plain letters like this: se pronuncia BOO-eh-nos DEE-as
+- Do NOT use brackets like [BOO-eh-nos] — write it as plain text so it can be read aloud naturally
+- Then give the English meaning
+- Then say: Ahora repite conmigo. (Now repeat after me.)
+- When the student attempts it, give specific encouraging feedback on what sounded good and what to improve
+- Then move to the next phrase`,
     free: "Natural open conversation. Follow the student's lead.",
   };
 
@@ -75,6 +81,7 @@ FORMAT RULES — follow exactly:
 - Spanish first, then English translation on the next line starting with 🇺🇸
 - Entire response under 80 words
 - NO markdown: no ##, no **, no bullets, no numbered lists
+- NO brackets like [OH-lah] — write phonetics as plain text only
 - ONE phrase or exchange at a time
 - Conversational, like a real person — never a textbook
 - Never repeat the same phrase twice in one response
@@ -82,7 +89,7 @@ FORMAT RULES — follow exactly:
 
 CORRECTION RULES — never let mistakes slide:
 - Correct EVERY grammar, vocabulary, or word-order error the student makes
-- Show the incorrect part, then the correct version clearly
+- Show the incorrect version, then the correct version clearly
 - Explain in one short simple sentence WHY it was wrong
 - Ask the student to try the corrected phrase again before moving on
 - Be encouraging but firm — a good teacher who cares about real progress
@@ -118,7 +125,6 @@ app.post("/api/chat", async (req, res) => {
       return res.status(500).json({ error: "ANTHROPIC_API_KEY not set. Add it in Secrets." });
     }
 
-    // sanitize: cap history, cap message length, keep roles valid
     const safe = messages
       .slice(-30)
       .filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
@@ -168,10 +174,11 @@ app.post("/api/tts", async (req, res) => {
   try {
     const { text, speed = 1.0 } = req.body || {};
     if (!text || !text.trim()) return res.status(400).json({ error: "text required" });
-    if (!ELEVENLABS_KEY) return res.status(204).send(); // graceful: no audio
+    if (!ELEVENLABS_KEY) return res.status(204).send();
 
     const clamped = Math.min(Math.max(Number(speed) || 1.0, 0.5), 1.5);
 
+    // Send the FULL text including phonetics — no filtering on server side
     const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {
       method: "POST",
       headers: {
@@ -210,4 +217,5 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log("Hermano v2 running on port " + PORT);
   console.log("Anthropic key:", ANTHROPIC_KEY ? "✓ set" : "✗ MISSING");
   console.log("ElevenLabs key:", ELEVENLABS_KEY ? "✓ set" : "✗ MISSING");
+  console.log("Voice ID:", VOICE_ID);
 });
