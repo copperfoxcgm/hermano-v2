@@ -8,14 +8,13 @@
   :root {
     --bg1:#1a0a2e; --bg2:#16213e; --bg3:#0f3460;
     --daily:#E07B3F; --ministry:#6B4FA0; --pron:#2E8B7A; --free:#C0782A;
-    --cream:#f5e6c8; --muted:#a89bc2; --dim:#7a6e8a;
+    --cream:#f5e6c8; --muted:#a89bc2; --dim:#7a6e8a; --accent:#E07B3F;
   }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   body {
     font-family: Georgia, 'Times New Roman', serif;
     background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
-    color: var(--cream);
-    min-height: 100dvh;
+    color: var(--cream); min-height: 100dvh;
   }
   .hidden { display:none !important; }
 
@@ -64,7 +63,7 @@
   #chat-sub { font-size:11px; color:var(--dim); }
   #level-select {
     margin-left:auto; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
-    border-radius:9px; color:var(--muted); font-size:11px; padding:5px 8px; font-family:inherit;
+    border-radius:9px; color:var(--muted); font-size:11px; padding:5px 8px; font-family:inherit; cursor:pointer;
   }
   #lesson-band { padding:8px 16px 10px; border-bottom:1px solid rgba(255,255,255,.07); flex-shrink:0; background:rgba(255,255,255,.03); }
   #lesson-label { font-size:11px; color:var(--muted); font-weight:600; margin-bottom:6px; }
@@ -77,23 +76,23 @@
   .avatar {
     width:28px; height:28px; border-radius:50%; flex-shrink:0; font-size:13px;
     display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg, var(--accent,#E07B3F), #6B4FA0);
+    background:linear-gradient(135deg, var(--accent), #6B4FA0);
   }
   .bubble {
     max-width:80%; padding:11px 14px; font-size:14px; line-height:1.65; white-space:pre-wrap;
     border-radius:18px 18px 18px 5px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
   }
-  .user .bubble { border-radius:18px 18px 5px 18px; border:none; color:#fff; background:var(--accent,#E07B3F); }
+  .user .bubble { border-radius:18px 18px 5px 18px; border:none; color:#fff; background:var(--accent); }
   .replay-btn {
     background:none; border:none; color:#5a5080; font-size:11px; cursor:pointer; font-family:inherit;
-    padding:3px 4px; margin-top:3px; display:flex; gap:5px; align-items:center;
+    padding:3px 4px; margin-top:3px; display:flex; gap:5px; align-items:center; transition:.2s;
   }
+  .replay-btn:hover { color:var(--accent); }
+  .replay-btn.playing { color:var(--accent); }
   .typing { display:flex; gap:5px; padding:13px 16px; }
-  .typing span { width:6px; height:6px; border-radius:50%; background:var(--accent,#E07B3F); opacity:.7; animation:bounce 1.2s infinite; }
+  .typing span { width:6px; height:6px; border-radius:50%; background:var(--accent); opacity:.7; animation:bounce 1.2s infinite; }
   .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
   @keyframes bounce { 0%,100%{transform:scale(1);opacity:.45} 50%{transform:scale(1.35);opacity:1} }
-
-  #listening-line { text-align:center; color:var(--muted); font-size:13px; font-style:italic; padding:4px; }
 
   #input-area { padding:10px 12px 14px; border-top:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.32); backdrop-filter:blur(10px); flex-shrink:0; }
   #speed-row { display:flex; gap:7px; align-items:center; margin-bottom:9px; padding-left:2px; }
@@ -102,15 +101,15 @@
     border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:var(--dim);
     border-radius:14px; font-size:11px; font-weight:600; padding:4px 11px; cursor:pointer; font-family:inherit; transition:.2s;
   }
-  .speed-btn.active { background:var(--accent,#E07B3F); border-color:transparent; color:#fff; }
+  .speed-btn.active { background:var(--accent); border-color:transparent; color:#fff; }
   #input-row { display:flex; gap:8px; align-items:flex-end; }
   #mic-btn, #send-btn {
     width:46px; height:46px; border-radius:13px; border:none; font-size:19px; cursor:pointer; flex-shrink:0;
     display:flex; align-items:center; justify-content:center; transition:.2s;
     background:rgba(255,255,255,.08); color:var(--dim);
   }
-  #mic-btn.listening { background:linear-gradient(135deg,var(--accent,#E07B3F),#c0392b); color:#fff; animation:micpulse 1s infinite; }
-  #send-btn.ready { background:linear-gradient(135deg,var(--accent,#E07B3F),#6B4FA0); color:#fff; }
+  #mic-btn.listening { background:linear-gradient(135deg,var(--accent),#c0392b); color:#fff; animation:micpulse 1s infinite; }
+  #send-btn.ready { background:linear-gradient(135deg,var(--accent),#6B4FA0); color:#fff; }
   @keyframes micpulse { 0%,100%{box-shadow:0 0 0 0 rgba(224,123,63,.4)} 50%{box-shadow:0 0 0 10px rgba(224,123,63,0)} }
   #text-input {
     flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:15px;
@@ -118,6 +117,14 @@
   }
   #text-input:focus { border-color:rgba(224,123,63,.45); }
   #hint { text-align:center; color:#3a3050; font-size:10px; font-style:italic; margin-top:7px; }
+  #speaking-bar {
+    text-align:center; color:#2E8B7A; font-size:11px; padding:5px; margin-bottom:4px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  #stop-audio-btn {
+    background:none; border:1px solid #2E8B7A; border-radius:6px; color:#2E8B7A;
+    font-size:10px; padding:2px 8px; cursor:pointer; font-family:inherit;
+  }
 
   /* ── Celebration ── */
   #celebration {
@@ -140,7 +147,7 @@
 </head>
 <body>
 
-<!-- ══ WELCOME SCREEN ══ -->
+<!-- ══ WELCOME ══ -->
 <div id="welcome">
   <div class="dove">🕊️</div>
   <h1>Hermano</h1>
@@ -151,21 +158,18 @@
     <span class="badge">🔊 Native Audio</span>
     <span class="badge">📚 5-Lesson Paths</span>
   </div>
-
   <div class="sect">Your Level</div>
   <div class="levels" id="level-buttons">
     <button data-level="beginner" class="active">Beginner</button>
     <button data-level="intermediate">Intermediate</button>
     <button data-level="advanced">Advanced</button>
   </div>
-
   <div class="sect">Choose Your Focus</div>
   <div class="modes" id="mode-cards"></div>
-
   <div class="verse">"For God has not given us a spirit of fear..." — 2 Tim 1:7</div>
 </div>
 
-<!-- ══ CHAT SCREEN ══ -->
+<!-- ══ CHAT ══ -->
 <div id="chat" class="hidden">
   <div id="chat-header">
     <button id="back-btn">←</button>
@@ -196,12 +200,17 @@
       <button class="speed-btn active" data-speed="1">1×</button>
       <button class="speed-btn" data-speed="1.25">1.25×</button>
     </div>
+    <div id="speaking-bar" class="hidden">
+      <span style="animation:bounce 1s infinite;display:inline-block">🔊</span>
+      Speaking...
+      <button id="stop-audio-btn">Stop</button>
+    </div>
     <div id="input-row">
       <button id="mic-btn" title="Tap to speak">🎙️</button>
       <input id="text-input" type="text" placeholder="Escribe un mensaje..." autocomplete="off">
       <button id="send-btn">↑</button>
     </div>
-    <div id="hint">🎙️ tap to speak — sends automatically when you pause</div>
+    <div id="hint">🎙️ tap mic to speak — sends automatically when you pause</div>
   </div>
 </div>
 
@@ -209,7 +218,7 @@
 <div id="celebration" class="hidden">
   <div class="card">
     <div class="big">🎉</div>
-    <h2 id="cel-title">Lesson 1 Complete!</h2>
+    <h2 id="cel-title">Lesson Complete!</h2>
     <p id="cel-text">Excellent work! Ready for the next lesson?</p>
     <button id="next-lesson-btn">Start Next Lesson →</button>
     <button id="stay-btn">Keep practicing this lesson</button>
@@ -217,10 +226,12 @@
 </div>
 
 <script>
-// ═════════ STATE ═════════
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
 const MODES = {
   daily:        { name:"Daily Life",      icon:"🌅", color:"#E07B3F", desc:"Greetings, shopping, directions & more", curriculum:true },
-  ministry:     { name:"Church Ministry", icon:"✝️", color:"#6B4FA0", desc:"Worship, prayer & scripture", curriculum:true },
+  ministry:     { name:"Church Ministry", icon:"✝️",  color:"#6B4FA0", desc:"Worship, prayer & scripture", curriculum:true },
   pronunciation:{ name:"Pronunciation",   icon:"🗣️", color:"#2E8B7A", desc:"Perfect your accent phrase by phrase", curriculum:true },
   free:         { name:"Free Practice",   icon:"💬", color:"#C0782A", desc:"Open conversation, your way", curriculum:false },
 };
@@ -230,72 +241,104 @@ const LESSON_TITLES = {
   pronunciation: ["Vowels","Key Consonants","Greeting Phrases","Church Words","Full Sentences"],
 };
 
-let state = {
-  level: "beginner",
-  mode: null,
-  lesson: 1,
-  messages: [],
-  speed: 1.0,
-  busy: false,
-};
+let state = { level:"beginner", mode:null, lesson:1, messages:[], speed:1.0, busy:false };
 
-// progress persisted per mode
 function getProgress() {
   try { return JSON.parse(localStorage.getItem("hermano-progress") || "{}"); }
   catch { return {}; }
 }
 function saveProgress(p) { localStorage.setItem("hermano-progress", JSON.stringify(p)); }
 
-// ═════════ AUDIO ═════════
+// ═══════════════════════════════════════════
+// AUDIO — fixed: single instance, speed-aware, no double-play
+// ═══════════════════════════════════════════
 let currentAudio = null;
 let audioUnlocked = false;
 
 function unlockAudio() {
   if (audioUnlocked) return;
-  // Play a silent buffer inside a user gesture to unlock autoplay
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const buf = ctx.createBuffer(1, 1, 22050);
+    const buf = ctx.createBuffer(1,1,22050);
     const src = ctx.createBufferSource();
     src.buffer = buf; src.connect(ctx.destination); src.start(0);
     audioUnlocked = true;
   } catch {}
 }
 
-function extractSpanish(text) {
-  return text.split("\n")
-    .filter(l => { const t=l.trim();
-      return t && !t.startsWith("🇺🇸") && !t.startsWith("💡") && !t.startsWith("🎙️") && !t.startsWith("⚠️"); })
-    .join(" ")
-    .replace(/\[.*?\]/g, "")
-    .trim().slice(0, 1200);
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  document.getElementById("speaking-bar").classList.add("hidden");
+  // reset all replay buttons
+  document.querySelectorAll(".replay-btn").forEach(b => {
+    b.classList.remove("playing");
+    b.textContent = "🔊 replay Spanish";
+  });
 }
 
-async function speak(text) {
-  const spanish = extractSpanish(text);
-  if (!spanish) return;
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+async function speak(text, replayBtn) {
+  // Always stop any current audio first — prevents double-play
+  stopAudio();
+  if (!text || !text.trim()) return;
+
+  if (replayBtn) {
+    replayBtn.classList.add("playing");
+    replayBtn.textContent = "⏸ playing...";
+  }
+
   try {
     const r = await fetch("/api/tts", {
-      method:"POST", headers:{ "content-type":"application/json" },
-      body: JSON.stringify({ text: spanish, speed: state.speed }),
+      method:"POST", headers:{"content-type":"application/json"},
+      body: JSON.stringify({ text: text.trim(), speed: state.speed }),
     });
-    if (r.status === 204 || !r.ok) return;
+    if (r.status === 204 || !r.ok) {
+      if (replayBtn) { replayBtn.classList.remove("playing"); replayBtn.textContent = "🔊 replay Spanish"; }
+      return;
+    }
     const blob = await r.blob();
-    if (!blob.size) return;
+    if (!blob.size) {
+      if (replayBtn) { replayBtn.classList.remove("playing"); replayBtn.textContent = "🔊 replay Spanish"; }
+      return;
+    }
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     currentAudio = audio;
-    audio.onended = () => { URL.revokeObjectURL(url); if (currentAudio===audio) currentAudio=null; };
-    audio.onerror = () => { URL.revokeObjectURL(url); if (currentAudio===audio) currentAudio=null; };
-    await audio.play().catch(e => console.warn("autoplay blocked:", e.message));
-  } catch (e) { console.warn("tts:", e); }
+
+    const speakingBar = document.getElementById("speaking-bar");
+    speakingBar.classList.remove("hidden");
+
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      if (currentAudio === audio) currentAudio = null;
+      speakingBar.classList.add("hidden");
+      if (replayBtn) { replayBtn.classList.remove("playing"); replayBtn.textContent = "🔊 replay Spanish"; }
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(url);
+      if (currentAudio === audio) currentAudio = null;
+      speakingBar.classList.add("hidden");
+      if (replayBtn) { replayBtn.classList.remove("playing"); replayBtn.textContent = "🔊 replay Spanish"; }
+    };
+
+    await audio.play().catch(e => {
+      console.warn("autoplay blocked:", e.message);
+      speakingBar.classList.add("hidden");
+      if (replayBtn) { replayBtn.classList.remove("playing"); replayBtn.textContent = "🔊 replay Spanish"; }
+    });
+  } catch(e) {
+    console.warn("tts error:", e);
+    if (replayBtn) { replayBtn.classList.remove("playing"); replayBtn.textContent = "🔊 replay Spanish"; }
+  }
 }
 
-// ═════════ WELCOME UI ═════════
-const welcomeEl = document.getElementById("welcome");
-const chatEl = document.getElementById("chat");
+document.getElementById("stop-audio-btn").addEventListener("click", stopAudio);
 
+// ═══════════════════════════════════════════
+// WELCOME UI
+// ═══════════════════════════════════════════
 function renderModeCards() {
   const progress = getProgress();
   const wrap = document.getElementById("mode-cards");
@@ -310,9 +353,12 @@ function renderModeCards() {
       dotsHtml = '<div class="lesson-dots">' + [1,2,3,4,5].map(n => {
         const done = p.done.includes(n);
         const cur = n === p.current;
-        const style = done ? `background:${m.color};border-color:${m.color};color:#fff`
-                    : cur ? `border-color:${m.color};border-width:2px;color:#fff;background:rgba(255,255,255,.08)` : "";
-        return `<span class="lesson-dot" data-mode="${id}" data-lesson="${n}" style="${style}">${done ? "✓" : n}</span>`;
+        const style = done
+          ? `background:${m.color};border-color:${m.color};color:#fff`
+          : cur
+          ? `border-color:${m.color};border-width:2px;color:#fff;background:rgba(255,255,255,.08)`
+          : "";
+        return `<span class="lesson-dot" data-mode="${id}" data-lesson="${n}" style="${style}">${done?"✓":n}</span>`;
       }).join("") + "</div>";
     }
     card.innerHTML = `
@@ -340,7 +386,9 @@ document.getElementById("level-buttons").addEventListener("click", (e) => {
   document.querySelectorAll("#level-buttons button").forEach(b => b.classList.toggle("active", b === btn));
 });
 
-// ═════════ CHAT UI ═════════
+// ═══════════════════════════════════════════
+// CHAT UI
+// ═══════════════════════════════════════════
 const messagesEl = document.getElementById("messages");
 const inputEl = document.getElementById("text-input");
 const micBtn = document.getElementById("mic-btn");
@@ -348,10 +396,10 @@ const sendBtn = document.getElementById("send-btn");
 
 function setAccent(color) {
   document.documentElement.style.setProperty("--accent", color);
-  chatEl.style.setProperty("--accent", color);
 }
 
 function startChat(modeId, lesson) {
+  stopAudio();
   state.mode = modeId;
   state.lesson = lesson;
   state.messages = [];
@@ -363,10 +411,9 @@ function startChat(modeId, lesson) {
   document.getElementById("level-select").value = state.level;
   messagesEl.innerHTML = "";
   updateLessonBand();
-  welcomeEl.classList.add("hidden");
-  chatEl.classList.remove("hidden");
-  // kick off conversation
-  sendToServer("Hello, I'm ready to start!", true);
+  document.getElementById("welcome").classList.add("hidden");
+  document.getElementById("chat").classList.remove("hidden");
+  sendToServer("Hello, I am ready to start!", true);
 }
 
 function updateLessonBand() {
@@ -374,36 +421,48 @@ function updateLessonBand() {
   const m = MODES[state.mode];
   if (!m || !m.curriculum) { band.classList.add("hidden"); return; }
   band.classList.remove("hidden");
-  const title = LESSON_TITLES[state.mode][state.lesson - 1] || "";
-  document.getElementById("lesson-label").textContent =
-    `Lesson ${state.lesson} of 5 — ${title}`;
-  const bars = document.querySelectorAll("#lesson-bar div");
-  bars.forEach((b, i) => {
+  const title = (LESSON_TITLES[state.mode] || [])[state.lesson - 1] || "";
+  document.getElementById("lesson-label").textContent = `Lesson ${state.lesson} of 5 — ${title}`;
+  document.querySelectorAll("#lesson-bar div").forEach((b, i) => {
     const n = i + 1;
     b.style.background = n < state.lesson ? m.color
-      : n === state.lesson ? m.color + "80" : "rgba(255,255,255,.08)";
+      : n === state.lesson ? m.color + "80"
+      : "rgba(255,255,255,.08)";
   });
 }
 
-function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// Store text per bubble for replay
+const bubbleTextMap = new WeakMap();
 
 function addBubble(role, text) {
   const row = document.createElement("div");
   row.className = "msg-row " + role;
   if (role === "assistant") {
-    row.innerHTML = `<div class="avatar">🕊️</div>
-      <div style="display:flex;flex-direction:column;align-items:flex-start;max-width:80%">
-        <div class="bubble"></div>
-        <button class="replay-btn">🔊 replay Spanish</button>
-      </div>`;
-    row.querySelector(".bubble").textContent = text;
-    row.querySelector(".replay-btn").addEventListener("click", () => { unlockAudio(); speak(text); });
+    const replayBtn = document.createElement("button");
+    replayBtn.className = "replay-btn";
+    replayBtn.textContent = "🔊 replay Spanish";
+    replayBtn.addEventListener("click", () => {
+      unlockAudio();
+      speak(text, replayBtn);
+    });
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.textContent = text;
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;flex-direction:column;align-items:flex-start;max-width:80%";
+    wrap.appendChild(bubble);
+    wrap.appendChild(replayBtn);
+    row.innerHTML = `<div class="avatar">🕊️</div>`;
+    row.appendChild(wrap);
   } else {
     row.innerHTML = `<div class="bubble"></div>`;
     row.querySelector(".bubble").textContent = text;
   }
   messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  return row;
 }
 
 function showTyping() {
@@ -415,18 +474,23 @@ function showTyping() {
 }
 function hideTyping() { document.getElementById("typing-row")?.remove(); }
 
+let autoSendTimer = null;
+function cancelAutoSend() { if (autoSendTimer) { clearTimeout(autoSendTimer); autoSendTimer = null; } }
+
 async function sendToServer(text, hidden = false) {
   if (state.busy) return;
   state.busy = true;
   cancelAutoSend();
+  stopAudio();
   if (!hidden) addBubble("user", text);
   state.messages.push({ role:"user", content:text });
   inputEl.value = "";
   updateSendBtn();
   showTyping();
+
   try {
     const r = await fetch("/api/chat", {
-      method:"POST", headers:{ "content-type":"application/json" },
+      method:"POST", headers:{"content-type":"application/json"},
       body: JSON.stringify({
         messages: state.messages, mode: state.mode,
         level: state.level, lesson: state.lesson,
@@ -441,17 +505,21 @@ async function sendToServer(text, hidden = false) {
     }
     const data = await r.json();
     state.messages.push({ role:"assistant", content:data.text });
-    addBubble("assistant", data.text);
-    speak(data.text);
+    const row = addBubble("assistant", data.text);
+    // speak with current speed — find the replay btn in the row
+    const replayBtn = row.querySelector(".replay-btn");
+    speak(data.text, replayBtn);
     if (data.lessonComplete && MODES[state.mode].curriculum) onLessonComplete();
-  } catch (e) {
+  } catch(e) {
     hideTyping();
     addBubble("assistant", "⚠️ Connection error. Please try again.");
   }
   state.busy = false;
 }
 
-// ═════════ LESSON COMPLETE ═════════
+// ═══════════════════════════════════════════
+// LESSON COMPLETE
+// ═══════════════════════════════════════════
 function onLessonComplete() {
   const progress = getProgress();
   const p = progress[state.mode] || { current:1, done:[] };
@@ -459,13 +527,11 @@ function onLessonComplete() {
   p.current = Math.min(state.lesson + 1, 5);
   progress[state.mode] = p;
   saveProgress(progress);
-
-  const title = LESSON_TITLES[state.mode][state.lesson - 1] || "";
+  const title = (LESSON_TITLES[state.mode] || [])[state.lesson - 1] || "";
   document.getElementById("cel-title").textContent = `Lesson ${state.lesson} Complete!`;
-  document.getElementById("cel-text").textContent =
-    state.lesson < 5
-      ? `"${title}" mastered! Ready for Lesson ${state.lesson + 1}?`
-      : `¡Felicidades! You've completed all 5 lessons of ${MODES[state.mode].name}!`;
+  document.getElementById("cel-text").textContent = state.lesson < 5
+    ? `"${title}" mastered! Ready for Lesson ${state.lesson + 1}?`
+    : `¡Felicidades! You have completed all 5 lessons!`;
   document.getElementById("next-lesson-btn").style.display = state.lesson < 5 ? "block" : "none";
   document.getElementById("celebration").classList.remove("hidden");
 }
@@ -478,16 +544,12 @@ document.getElementById("stay-btn").addEventListener("click", () => {
   document.getElementById("celebration").classList.add("hidden");
 });
 
-// ═════════ SPEECH RECOGNITION ═════════
+// ═══════════════════════════════════════════
+// SPEECH RECOGNITION
+// ═══════════════════════════════════════════
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let listening = false;
-let autoSendTimer = null;
-const AUTO_SEND_MS = 1500;
-
-function cancelAutoSend() {
-  if (autoSendTimer) { clearTimeout(autoSendTimer); autoSendTimer = null; }
-}
 
 if (SR) {
   recognition = new SR();
@@ -495,37 +557,42 @@ if (SR) {
   recognition.interimResults = true;
 
   recognition.onresult = (e) => {
-    // ALWAYS use only the last result — prevents duplicate word bug
+    // Use ONLY the last result — never concatenate — prevents duplicate words
     const result = e.results[e.results.length - 1];
     const text = result[0].transcript.trim();
-    inputEl.value = text;      // replace, never append
+    inputEl.value = text;
     updateSendBtn();
     if (result.isFinal) {
       try { recognition.stop(); } catch {}
       cancelAutoSend();
       autoSendTimer = setTimeout(() => {
         const t = inputEl.value.trim();
-        if (t) sendToServer(t);
-      }, AUTO_SEND_MS);
+        if (t) { unlockAudio(); sendToServer(t); }
+      }, 1500);
     }
   };
-  recognition.onend = () => { listening = false; micBtn.classList.remove("listening"); micBtn.textContent = "🎙️"; };
+
+  recognition.onend = () => {
+    listening = false;
+    micBtn.classList.remove("listening");
+    micBtn.textContent = "🎙️";
+  };
+
   recognition.onerror = (e) => {
-    listening = false; micBtn.classList.remove("listening"); micBtn.textContent = "🎙️";
-    if (e.error === "not-allowed") alert("Microphone blocked. Allow mic access in your browser settings.");
+    listening = false;
+    micBtn.classList.remove("listening");
+    micBtn.textContent = "🎙️";
+    if (e.error === "not-allowed") alert("Microphone blocked. Please allow mic access in your browser settings.");
   };
 } else {
   micBtn.style.display = "none";
-  document.getElementById("hint").textContent = "Type a message and press Enter";
+  document.getElementById("hint").textContent = "Type a message and press Enter or tap ↑";
 }
 
 micBtn.addEventListener("click", () => {
   unlockAudio();
   if (!recognition) return;
-  if (listening) {
-    try { recognition.stop(); } catch {}
-    return;
-  }
+  if (listening) { try { recognition.stop(); } catch {} return; }
   cancelAutoSend();
   recognition.lang = state.mode === "pronunciation" ? "es-ES" : "en-US";
   try {
@@ -533,44 +600,58 @@ micBtn.addEventListener("click", () => {
     listening = true;
     micBtn.classList.add("listening");
     micBtn.textContent = "⏹️";
-  } catch {}
+  } catch(e) { console.warn("mic start error:", e); }
 });
 
-// ═════════ INPUT ═════════
+// ═══════════════════════════════════════════
+// INPUT CONTROLS
+// ═══════════════════════════════════════════
 function updateSendBtn() {
   sendBtn.classList.toggle("ready", !!inputEl.value.trim());
 }
+
 inputEl.addEventListener("input", () => { cancelAutoSend(); updateSendBtn(); });
 inputEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") { unlockAudio(); const t = inputEl.value.trim(); if (t) sendToServer(t); }
+  if (e.key === "Enter") {
+    unlockAudio();
+    const t = inputEl.value.trim();
+    if (t) sendToServer(t);
+  }
 });
-sendBtn.addEventListener("click", () => { unlockAudio(); const t = inputEl.value.trim(); if (t) sendToServer(t); });
+sendBtn.addEventListener("click", () => {
+  unlockAudio();
+  const t = inputEl.value.trim();
+  if (t) sendToServer(t);
+});
 
-// speed buttons
+// Speed buttons — update state AND any currently playing audio
 document.getElementById("speed-row").addEventListener("click", (e) => {
   const btn = e.target.closest(".speed-btn");
   if (!btn) return;
   state.speed = Number(btn.dataset.speed);
   document.querySelectorAll(".speed-btn").forEach(b => b.classList.toggle("active", b === btn));
+  // If audio is playing, changing speed requires re-request (ElevenLabs controls speed server-side)
+  // Just stop current audio so next replay uses new speed
+  if (currentAudio) stopAudio();
 });
 
-// level change mid-chat
 document.getElementById("level-select").addEventListener("change", (e) => {
   state.level = e.target.value;
   document.getElementById("chat-sub").textContent = cap(state.level);
 });
 
-// back button
 document.getElementById("back-btn").addEventListener("click", () => {
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-  if (recognition && listening) { try { recognition.stop(); } catch {} }
+  stopAudio();
   cancelAutoSend();
-  chatEl.classList.add("hidden");
-  welcomeEl.classList.remove("hidden");
+  if (recognition && listening) { try { recognition.stop(); } catch {} }
+  document.getElementById("chat").classList.add("hidden");
+  document.getElementById("welcome").classList.remove("hidden");
   renderModeCards();
 });
 
-// init
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
 renderModeCards();
 </script>
 </body>
